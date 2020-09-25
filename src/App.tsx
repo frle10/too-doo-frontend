@@ -1,7 +1,11 @@
 import React from 'react';
+import Spinner from './components/Spinner';
+import Home from './pages/Home';
 
 function App() {
-  return <div></div>;
+  const loading = false;
+
+  return <div>{loading ? <Spinner /> : <Home />}</div>;
 }
 
 export default App;
