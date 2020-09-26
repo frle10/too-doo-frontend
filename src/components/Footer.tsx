@@ -23,12 +23,18 @@ const footerHeaderStyle = css({
   margin: '5px 0',
 });
 
+const footerContentStyle = css({
+  marginBottom: '20px',
+});
+
 export const Footer = () => {
   return (
     <div className={footerStyle}>
       <div className={separatorStyle}></div>
       <div className={footerHeaderStyle}>Too Doo</div>
-      <div>Your to-dos have never been simpler.</div>
+      <div className={footerContentStyle}>
+        Your to-dos have never been simpler.
+      </div>
     </div>
   );
 };
