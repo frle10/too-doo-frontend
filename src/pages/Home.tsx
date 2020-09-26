@@ -7,7 +7,7 @@ import { ToDoList } from '../components/ToDoList';
 const Home = () => {
   return (
     <>
-      <Header />
+      <Header toDoListName='ragu shopping' />
       <ToDoGenerator />
       <ToDoList />
       <Footer />
