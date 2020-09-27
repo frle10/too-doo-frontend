@@ -1,6 +1,7 @@
 import React from 'react';
 import { css } from 'emotion';
 import Plus from '../images/plus.svg';
+import { toDoListExample } from '../assets/to-do-example';
 
 const generatorStyle = css({
   position: 'relative',
@@ -24,15 +25,30 @@ const inputStyle = css({
 
 const plusStyle = css({
   position: 'absolute',
-  padding: '0 20px',
+  margin: '0 20px',
   cursor: 'pointer',
 });
 
 export const ToDoGenerator = () => {
+  const addToDo = () => {
+    const generator = document.getElementById('generator') as HTMLInputElement;
+    if (generator.value) {
+      toDoListExample.todos.push({
+        completed: false,
+        content: generator.value,
+      });
+    }
+  };
+
   return (
     <div className={generatorStyle}>
-      <img src={Plus} alt='Plus' className={plusStyle} />
-      <input type='text' className={inputStyle} placeholder='Add a to-do...' />
+      <img src={Plus} alt='Plus' className={plusStyle} onClick={addToDo} />
+      <input
+        type='text'
+        id='generator'
+        className={inputStyle}
+        placeholder='Add a to-do...'
+      />
     </div>
   );
 };
