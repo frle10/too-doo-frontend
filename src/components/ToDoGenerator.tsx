@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { KeyboardEvent } from 'react';
 import { css } from 'emotion';
 import Plus from '../images/plus.svg';
-import { toDoListExample } from '../assets/to-do-example';
+
+interface Props {
+  addToDo: (toDo: any) => void;
+}
 
 const generatorStyle = css({
   position: 'relative',
@@ -29,14 +32,20 @@ const plusStyle = css({
   cursor: 'pointer',
 });
 
-export const ToDoGenerator = () => {
+export const ToDoGenerator = (props: Props) => {
   const addToDo = () => {
     const generator = document.getElementById('generator') as HTMLInputElement;
     if (generator.value) {
-      toDoListExample.todos.push({
+      props.addToDo({
         completed: false,
         content: generator.value,
       });
+    }
+  };
+
+  const detectEnter = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      addToDo();
     }
   };
 
@@ -48,6 +57,7 @@ export const ToDoGenerator = () => {
         id='generator'
         className={inputStyle}
         placeholder='Add a to-do...'
+        onKeyPress={detectEnter}
       />
     </div>
   );

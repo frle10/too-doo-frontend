@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { css } from 'emotion';
 import Checkmark from '../images/checkmark.svg';
 
@@ -6,6 +6,7 @@ interface Props {
   id: number;
   completed: boolean;
   toDoContent: string;
+  changeCompleted: (index: number) => void;
 }
 
 const toDoStyle = css({
@@ -42,19 +43,17 @@ const checkmarkStyle = (completed: boolean) =>
   });
 
 export const ToDo = (props: Props) => {
-  const [completed, setCompleted] = useState(props.completed);
-
   return (
     <div className={toDoStyle}>
       <div
         id={`todo${props.id}`}
-        className={customCheckboxStyle(completed)}
-        onClick={() => setCompleted(!completed)}
+        className={customCheckboxStyle(props.completed)}
+        onClick={() => props.changeCompleted(props.id)}
       >
         <img
           src={Checkmark}
           alt='Checkmark'
-          className={checkmarkStyle(completed)}
+          className={checkmarkStyle(props.completed)}
         />
       </div>
       <label>{props.toDoContent}</label>

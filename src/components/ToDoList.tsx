@@ -3,6 +3,7 @@ import { ToDo } from './ToDo';
 
 interface Props {
   toDos: Array<any>;
+  changeCompleted: (index: number) => void;
 }
 
 export const ToDoList = (props: Props) => {
@@ -13,6 +14,7 @@ export const ToDoList = (props: Props) => {
           id={index}
           completed={toDo.completed}
           toDoContent={toDo.content}
+          changeCompleted={props.changeCompleted}
           key={index}
         />
       ))}
