@@ -5,7 +5,7 @@ import Pen from '../images/pen.svg';
 import Done from '../images/done-icon.svg';
 
 interface Props {
-  toDoListName: string;
+  name: string;
   changeName: (name: string) => void;
   newList: () => void;
 }
@@ -104,7 +104,7 @@ export const Header = (props: Props) => {
             inputStyle,
             inputDisplayStyle(showInput),
           ])}
-          defaultValue={props.toDoListName}
+          defaultValue={props.name}
           onBlur={() => validateNameChange(setShowInput, props.changeName)}
           onKeyPress={detectEnter}
         />
@@ -112,7 +112,7 @@ export const Header = (props: Props) => {
           className={cx([nameDisplayStyle(showInput), toDoListNameStyle])}
           onClick={() => makeEditable(setShowInput)}
         >
-          {props.toDoListName}
+          {props.name}
         </div>
         <div
           className={cx([nameDisplayStyle(showInput), editButtonStyle])}

@@ -3,7 +3,7 @@ import React from 'react';
 import { ToDo } from './ToDo';
 
 interface Props {
-  toDos: Array<any>;
+  todos: Array<any>;
   changeCompleted: (index: number) => void;
 }
 
@@ -15,11 +15,11 @@ const listStyle = css({
 export const ToDoList = (props: Props) => {
   return (
     <ul className={listStyle}>
-      {props.toDos.map((toDo, index) => (
+      {props.todos.map((todo, index) => (
         <ToDo
           id={index}
-          completed={toDo.completed}
-          toDoContent={toDo.content}
+          completed={todo.completed}
+          toDoContent={todo.content}
           changeCompleted={props.changeCompleted}
           key={index}
         />
