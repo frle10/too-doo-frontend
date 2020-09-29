@@ -10,6 +10,9 @@ const generatorStyle = css({
   position: 'relative',
   display: 'flex',
   alignItems: 'center',
+  WebkitUserSelect: 'none',
+  msUserSelect: 'none',
+  userSelect: 'none',
 });
 
 const inputStyle = css({

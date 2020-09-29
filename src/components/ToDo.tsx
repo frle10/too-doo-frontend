@@ -44,7 +44,7 @@ const checkmarkStyle = (completed: boolean) =>
 
 export const ToDo = (props: Props) => {
   return (
-    <div className={toDoStyle}>
+    <li className={toDoStyle}>
       <div
         id={`todo${props.id}`}
         className={customCheckboxStyle(props.completed)}
@@ -57,6 +57,6 @@ export const ToDo = (props: Props) => {
         />
       </div>
       <label>{props.toDoContent}</label>
-    </div>
+    </li>
   );
 };

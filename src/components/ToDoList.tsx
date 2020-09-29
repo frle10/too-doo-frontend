@@ -1,3 +1,4 @@
+import { css } from 'emotion';
 import React from 'react';
 import { ToDo } from './ToDo';
 
@@ -6,9 +7,14 @@ interface Props {
   changeCompleted: (index: number) => void;
 }
 
+const listStyle = css({
+  padding: 0,
+  listStyleType: 'none',
+});
+
 export const ToDoList = (props: Props) => {
   return (
-    <div>
+    <ul className={listStyle}>
       {props.toDos.map((toDo, index) => (
         <ToDo
           id={index}
@@ -18,6 +24,6 @@ export const ToDoList = (props: Props) => {
           key={index}
         />
       ))}
-    </div>
+    </ul>
   );
 };
