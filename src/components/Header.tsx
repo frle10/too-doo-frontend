@@ -83,7 +83,7 @@ const newListButtonStyle = css({
   },
 });
 
-export const Header = (props: Props) => {
+const Header = (props: Props) => {
   const [showInput, setShowInput] = useState(false);
 
   const detectEnter = (e: KeyboardEvent) => {
@@ -133,3 +133,5 @@ export const Header = (props: Props) => {
     </div>
   );
 };
+
+export default Header;

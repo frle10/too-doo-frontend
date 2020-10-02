@@ -1,3 +1,4 @@
+import { UNTITLED } from './constants';
 export const focusInput = () => {
   const input = document.getElementById('toDoListName') as HTMLInputElement;
   setTimeout(() => input.focus(), 0);
@@ -14,7 +15,7 @@ export const validateNameChange = (
 ) => {
   const input = document.getElementById('toDoListName') as HTMLInputElement;
   if (!input.value) {
-    input.value = 'untitled';
+    input.value = UNTITLED;
   }
 
   changeName(input.value);

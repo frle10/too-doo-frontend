@@ -1,10 +1,10 @@
 import { css } from 'emotion';
 import React from 'react';
-import { ToDo } from './ToDo';
+import ToDo from './ToDo';
 
 interface Props {
   todos: Array<any>;
-  changeCompleted: (index: number) => void;
+  changeCompleted: (id: number) => void;
 }
 
 const listStyle = css({
@@ -12,12 +12,12 @@ const listStyle = css({
   listStyleType: 'none',
 });
 
-export const ToDoList = (props: Props) => {
+const ToDoList = (props: Props) => {
   return (
     <ul className={listStyle}>
       {props.todos.map((todo, index) => (
         <ToDo
-          id={index}
+          id={todo.id}
           completed={todo.completed}
           toDoContent={todo.content}
           changeCompleted={props.changeCompleted}
@@ -27,3 +27,5 @@ export const ToDoList = (props: Props) => {
     </ul>
   );
 };
+
+export default ToDoList;

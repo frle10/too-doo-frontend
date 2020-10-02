@@ -6,7 +6,7 @@ interface Props {
   id: number;
   completed: boolean;
   toDoContent: string;
-  changeCompleted: (index: number) => void;
+  changeCompleted: (id: number) => void;
 }
 
 const toDoStyle = css({
@@ -42,7 +42,7 @@ const checkmarkStyle = (completed: boolean) =>
     userSelect: 'none',
   });
 
-export const ToDo = (props: Props) => {
+const ToDo = (props: Props) => {
   return (
     <li className={toDoStyle}>
       <div
@@ -60,3 +60,5 @@ export const ToDo = (props: Props) => {
     </li>
   );
 };
+
+export default ToDo;

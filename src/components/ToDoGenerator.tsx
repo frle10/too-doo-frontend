@@ -3,7 +3,7 @@ import { css } from 'emotion';
 import Plus from '../images/plus.svg';
 
 interface Props {
-  addToDo: (toDo: any) => void;
+  addTodo: (todo: any) => void;
 }
 
 const generatorStyle = css({
@@ -35,11 +35,11 @@ const plusStyle = css({
   cursor: 'pointer',
 });
 
-export const ToDoGenerator = (props: Props) => {
-  const addToDo = () => {
+const ToDoGenerator = (props: Props) => {
+  const addTodo = () => {
     const generator = document.getElementById('generator') as HTMLInputElement;
     if (generator.value) {
-      props.addToDo({
+      props.addTodo({
         completed: false,
         content: generator.value,
       });
@@ -48,13 +48,13 @@ export const ToDoGenerator = (props: Props) => {
 
   const detectEnter = (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
-      addToDo();
+      addTodo();
     }
   };
 
   return (
     <div className={generatorStyle}>
-      <img src={Plus} alt='Plus' className={plusStyle} onClick={addToDo} />
+      <img src={Plus} alt='Plus' className={plusStyle} onClick={addTodo} />
       <input
         type='text'
         id='generator'
@@ -65,3 +65,5 @@ export const ToDoGenerator = (props: Props) => {
     </div>
   );
 };
+
+export default ToDoGenerator;

@@ -27,7 +27,7 @@ const footerContentStyle = css({
   marginBottom: '20px',
 });
 
-export const Footer = () => {
+const Footer = () => {
   return (
     <div className={footerStyle}>
       <div className={separatorStyle}></div>
@@ -38,3 +38,5 @@ export const Footer = () => {
     </div>
   );
 };
+
+export default Footer;
