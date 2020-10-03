@@ -1,15 +1,16 @@
 import axios from 'axios';
+import { BACKEND_DOMAIN } from './constants';
 
 export const callChangeName = (uuid: string | undefined, name: string) => {
-  return axios.patch(`http://localhost:3000/todos/${uuid}`, { name });
+  return axios.patch(`${BACKEND_DOMAIN}/todos/${uuid}`, { name });
 };
 
 export const callAddTodo = (uuid: string | undefined, content: string) => {
-  return axios.post(`http://localhost:3000/todos/todo/${uuid}`, {
+  return axios.post(`${BACKEND_DOMAIN}/todos/todo/${uuid}`, {
     content,
   });
 };
 
 export const callChangeCompleted = (id: number) => {
-  return axios.patch(`http://localhost:3000/todos/todo/${id}`);
+  return axios.patch(`${BACKEND_DOMAIN}/todos/todo/${id}`);
 };

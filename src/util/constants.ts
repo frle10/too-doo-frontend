@@ -1,6 +1,7 @@
 import { TodoList } from './types';
 
 export const UNTITLED = 'untitled';
+export const BACKEND_DOMAIN = 'http://api.frle.net';
 
 export const toDoListExample: TodoList = {
   id: 1,

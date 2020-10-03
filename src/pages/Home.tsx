@@ -11,7 +11,7 @@ import {
   callAddTodo,
   callChangeCompleted,
 } from '../util/apiUtil';
-import { emptyList, UNTITLED } from '../util/constants';
+import { BACKEND_DOMAIN, emptyList, UNTITLED } from '../util/constants';
 
 interface ParamTypes {
   uuid: string | undefined;
@@ -29,7 +29,7 @@ const Home = () => {
       if (!urlUuid) {
         setToDoList(emptyList);
       } else {
-        const list = await axios.get(`http://localhost:3000/todos/${uuid}`);
+        const list = await axios.get(`${BACKEND_DOMAIN}/todos/${uuid}`);
         if (list.data) {
           setToDoList(list.data);
         } else {
