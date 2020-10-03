@@ -29,7 +29,7 @@ const Home = () => {
       if (!urlUuid) {
         setToDoList(emptyList);
       } else {
-        const list = await axios.get(`${BACKEND_DOMAIN}/todos/${uuid}`, {headers: {'Access-Control-Allow-Origin': '*'}});
+        const list = await axios.get(`${BACKEND_DOMAIN}/todos/${uuid}`);
         if (list.data) {
           setToDoList(list.data);
         } else {
