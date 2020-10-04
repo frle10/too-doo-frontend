@@ -63,7 +63,7 @@ const Home = () => {
       input.value = tl.data.name;
 
       if (!urlUuid) {
-        history.push(`/${toDoList.uuid}`);
+        history.push(`/${uuidArg}`);
       }
     });
   };

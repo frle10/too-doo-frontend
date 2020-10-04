@@ -1,4 +1,4 @@
-import React, { KeyboardEvent, useState } from 'react';
+import React, { useState } from 'react';
 import { css, cx } from 'emotion';
 import { makeEditable, validateNameChange } from '../util/headerUtil';
 import Pen from '../images/pen.svg';
@@ -16,8 +16,8 @@ const headerStyle = css({
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',
-  margin: '16px 0',
-  minHeight: '35px',
+  margin: '20px 0',
+  maxHeight: '45px',
 });
 
 const toDoListNameStyle = css({
@@ -29,41 +29,40 @@ const toDoListNameStyle = css({
 });
 
 const inputStyle = css({
+  maxWidth: '400px',
   fontFamily: 'Inter',
   padding: '0 10px',
   border: '1px solid black',
   borderRadius: '4px',
   boxShadow: '0px 0px 1px 1px rgba(0,0,0,0.75)',
-  margin: '-1px 0',
-  height: '35px',
   [mqMax[2]]: {
     fontSize: '26px',
-    width: '400px',
+    maxWidth: '300px',
   },
   [mqMax[1]]: {
     fontSize: '18px',
-    width: '150px',
+    maxWidth: '150px',
   },
   [mqMax[0]]: {
     fontSize: '16px',
-    width: '100px',
+    maxWidth: '100px',
   },
 });
 
 const divNameStyle = css({
-  width: '500px',
+  maxWidth: '500px',
   wordBreak: 'break-all',
   [mqMax[2]]: {
     fontSize: '26px',
-    width: '400px',
+    maxWidth: '300px',
   },
   [mqMax[1]]: {
     fontSize: '18px',
-    width: '150px',
+    maxWidth: '150px',
   },
   [mqMax[0]]: {
     fontSize: '16px',
-    width: '100px',
+    maxWidth: '100px',
   },
 });
 
@@ -74,7 +73,7 @@ const nameDisplayStyle = (showInput: boolean) =>
 
 const inputDisplayStyle = (showInput: boolean) =>
   css({
-    display: showInput ? 'block' : 'none',
+    display: showInput ? 'inline' : 'none',
   });
 
 const editButtonStyle = css({
@@ -89,10 +88,8 @@ const editButtonStyle = css({
     cursor: 'pointer',
   },
   [mqMax[1]]: {
-    flexDirection: 'column',
-    justifyContent: 'center',
     fontSize: '12px',
-    marginLeft: '5px',
+    marginLeft: '10px',
   },
 });
 
@@ -100,14 +97,16 @@ const penSvgStyle = css({
   marginRight: '5px',
   [mqMax[1]]: {
     width: '15px',
-    marginRight: '0',
-    marginBottom: '5px',
   },
 });
 
 const doneStyle = css({
   marginLeft: '20px',
+  marginRight: '5px',
   cursor: 'pointer',
+  [mqMax[1]]: {
+    marginLeft: '10px',
+  },
 });
 
 const newListButtonStyle = css({
@@ -131,18 +130,11 @@ const newListButtonStyle = css({
   [mqMax[1]]: {
     fontSize: '12px',
     minWidth: '70px',
-    minHeight: '40px',
   },
 });
 
 const Header = (props: Props) => {
   const [showInput, setShowInput] = useState(false);
-
-  const detectEnter = (e: KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      validateNameChange(setShowInput, props.changeName);
-    }
-  };
 
   return (
     <div className={headerStyle}>
@@ -158,7 +150,6 @@ const Header = (props: Props) => {
           ])}
           defaultValue={props.name}
           onBlur={() => validateNameChange(setShowInput, props.changeName)}
-          onKeyPress={detectEnter}
         />
         <div
           className={cx([
