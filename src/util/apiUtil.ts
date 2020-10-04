@@ -1,6 +1,10 @@
 import axios from 'axios';
 import { BACKEND_DOMAIN } from './constants';
 
+export const callGetTodoList = (uuid: string | undefined) => {
+  return axios.get(`${BACKEND_DOMAIN}/todos/${uuid}`);
+};
+
 export const callChangeName = (uuid: string | undefined, name: string) => {
   return axios.patch(`${BACKEND_DOMAIN}/todos/${uuid}`, { name });
 };

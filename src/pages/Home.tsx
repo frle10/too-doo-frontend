@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-import axios from 'axios';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import ToDoGenerator from '../components/ToDoGenerator';
@@ -10,8 +9,9 @@ import {
   callChangeName,
   callAddTodo,
   callChangeCompleted,
+  callGetTodoList,
 } from '../util/apiUtil';
-import { BACKEND_DOMAIN, emptyList, UNTITLED } from '../util/constants';
+import { emptyList, UNTITLED } from '../util/constants';
 
 interface ParamTypes {
   uuid: string | undefined;
@@ -29,12 +29,13 @@ const Home = () => {
       if (!urlUuid) {
         setToDoList(emptyList);
       } else {
-        const list = await axios.get(`${BACKEND_DOMAIN}/todos/${uuid}`);
-        if (list.data) {
-          setToDoList(list.data);
-        } else {
-          history.push('/NotFound');
-        }
+        callGetTodoList(urlUuid).then((tl) => {
+          if (tl.data) {
+            setToDoList(tl.data);
+          } else {
+            history.push('/NotFound');
+          }
+        });
       }
     };
 
@@ -70,6 +71,9 @@ const Home = () => {
         todos: [todoToAdd.data, ...toDoList.todos],
       })
     );
+
+    const generator = document.getElementById('generator') as HTMLInputElement;
+    generator.value = '';
     history.push(`/${toDoList.uuid}`);
   };
 
