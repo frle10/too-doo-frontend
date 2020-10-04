@@ -31,6 +31,7 @@ const Home = () => {
         setToDoList(emptyList);
         if (!valid) {
           history.push('/');
+          setUrlUuid(undefined);
         }
       } else {
         callGetTodoList(urlUuid).then((tl) => {
