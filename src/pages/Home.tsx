@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4, validate } from 'uuid';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import ToDoGenerator from '../components/ToDoGenerator';
@@ -29,17 +29,21 @@ const Home = () => {
       if (!urlUuid) {
         setToDoList(emptyList);
       } else {
-        callGetTodoList(urlUuid).then((tl) => {
-          if (tl.data) {
-            setToDoList(tl.data);
-            const input = document.getElementById(
-              'toDoListName'
-            ) as HTMLInputElement;
-            input.value = tl.data.name;
-          } else {
-            history.push('/NotFound');
-          }
-        });
+        if (validate(urlUuid)) {
+          callGetTodoList(urlUuid).then((tl) => {
+            if (tl.data) {
+              setToDoList(tl.data);
+              const input = document.getElementById(
+                'toDoListName'
+              ) as HTMLInputElement;
+              input.value = tl.data.name;
+            } else {
+              history.push('/NotFound');
+            }
+          });
+        } else {
+          history.push('/');
+        }
       }
     };
 
