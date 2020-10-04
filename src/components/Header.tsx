@@ -121,8 +121,8 @@ const newListButtonStyle = css({
   borderRadius: '4px',
   fontSize: '16px',
   fontWeight: 'bold',
-  width: '100px',
-  height: '43px',
+  minWidth: '100px',
+  minHeight: '43px',
   ':hover': {
     boxShadow: 'none',
     background: 'linear-gradient(90deg, #FFD976 0%, #F8BE26 100%)',
@@ -130,8 +130,8 @@ const newListButtonStyle = css({
   },
   [mqMax[1]]: {
     fontSize: '12px',
-    width: '70px',
-    height: '40px',
+    minWidth: '70px',
+    minHeight: '40px',
   },
 });
 
