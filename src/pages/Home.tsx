@@ -26,24 +26,24 @@ const Home = () => {
 
   useEffect(() => {
     const getTodoList = async () => {
-      if (!urlUuid) {
+      const valid = validate(urlUuid ? urlUuid : '');
+      if (!urlUuid || !valid) {
         setToDoList(emptyList);
-      } else {
-        if (validate(urlUuid)) {
-          callGetTodoList(urlUuid).then((tl) => {
-            if (tl.data) {
-              setToDoList(tl.data);
-              const input = document.getElementById(
-                'toDoListName'
-              ) as HTMLInputElement;
-              input.value = tl.data.name;
-            } else {
-              history.push('/NotFound');
-            }
-          });
-        } else {
+        if (!valid) {
           history.push('/');
         }
+      } else {
+        callGetTodoList(urlUuid).then((tl) => {
+          if (tl.data) {
+            setToDoList(tl.data);
+            const input = document.getElementById(
+              'toDoListName'
+            ) as HTMLInputElement;
+            input.value = tl.data.name;
+          } else {
+            history.push('/NotFound');
+          }
+        });
       }
     };
 
