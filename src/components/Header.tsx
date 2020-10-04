@@ -109,7 +109,7 @@ const doneStyle = css({
   },
 });
 
-const newListButtonStyle = css({
+export const newListButtonStyle = css({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
