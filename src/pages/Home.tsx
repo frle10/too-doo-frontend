@@ -32,6 +32,10 @@ const Home = () => {
         callGetTodoList(urlUuid).then((tl) => {
           if (tl.data) {
             setToDoList(tl.data);
+            const input = document.getElementById(
+              'toDoListName'
+            ) as HTMLInputElement;
+            input.value = tl.data.name;
           } else {
             history.push('/NotFound');
           }
