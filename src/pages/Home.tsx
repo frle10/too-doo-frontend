@@ -55,7 +55,12 @@ const Home = () => {
 
     await callChangeName(uuidArg, name).then((tl) => {
       setToDoList(tl.data);
-      history.push(`/${toDoList.uuid}`);
+      const input = document.getElementById('toDoListName') as HTMLInputElement;
+      input.value = tl.data.name;
+
+      if (!urlUuid) {
+        history.push(`/${toDoList.uuid}`);
+      }
     });
   };
 

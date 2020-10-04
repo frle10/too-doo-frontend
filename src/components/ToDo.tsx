@@ -1,6 +1,7 @@
 import React from 'react';
 import { css } from 'emotion';
 import Checkmark from '../images/checkmark.svg';
+import { mqMax } from '../util/constants';
 
 interface Props {
   id: number;
@@ -16,9 +17,13 @@ const toDoStyle = css({
   alignItems: 'center',
   fontSize: '21px',
   margin: '25px 0',
-  '& label': {
-    marginLeft: '15px',
+  [mqMax[1]]: {
+    fontSize: '16px',
   },
+});
+
+const labelStyle = css({
+  wordBreak: 'break-all',
 });
 
 const customCheckboxStyle = (completed: boolean) =>
@@ -26,12 +31,17 @@ const customCheckboxStyle = (completed: boolean) =>
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    width: '24px',
-    height: '24px',
+    minWidth: '24px',
+    minHeight: '24px',
+    marginRight: '15px',
     border: '2px solid black',
     borderRadius: '4px',
     backgroundColor: completed ? 'black' : 'white',
     cursor: 'pointer',
+    [mqMax[1]]: {
+      minWidth: '20px',
+      minHeight: '20px',
+    },
   });
 
 const checkmarkStyle = (completed: boolean) =>
@@ -40,6 +50,9 @@ const checkmarkStyle = (completed: boolean) =>
     WebkitUserSelect: 'none',
     msUserSelect: 'none',
     userSelect: 'none',
+    [mqMax[1]]: {
+      width: '12px',
+    },
   });
 
 const ToDo = (props: Props) => {
@@ -56,7 +69,7 @@ const ToDo = (props: Props) => {
           className={checkmarkStyle(props.completed)}
         />
       </div>
-      <label>{props.toDoContent}</label>
+      <div className={labelStyle}>{props.toDoContent}</div>
     </li>
   );
 };

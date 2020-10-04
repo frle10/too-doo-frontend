@@ -2,9 +2,13 @@ import React from 'react';
 import { css } from 'emotion';
 import Spinner from './components/Spinner';
 import ApplicationRouter from './ApplicationRouter';
+import { mqMax } from './util/constants';
 
 const app = css({
   padding: '0 20%',
+  [mqMax[2]]: {
+    padding: '0 10%',
+  },
 });
 
 function App() {

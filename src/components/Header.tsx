@@ -3,6 +3,7 @@ import { css, cx } from 'emotion';
 import { makeEditable, validateNameChange } from '../util/headerUtil';
 import Pen from '../images/pen.svg';
 import Done from '../images/done-icon.svg';
+import { mqMax } from '../util/constants';
 
 interface Props {
   name: string;
@@ -16,6 +17,7 @@ const headerStyle = css({
   justifyContent: 'space-between',
   alignItems: 'center',
   margin: '16px 0',
+  minHeight: '35px',
 });
 
 const toDoListNameStyle = css({
@@ -33,11 +35,41 @@ const inputStyle = css({
   borderRadius: '4px',
   boxShadow: '0px 0px 1px 1px rgba(0,0,0,0.75)',
   margin: '-1px 0',
+  height: '35px',
+  [mqMax[2]]: {
+    fontSize: '26px',
+    width: '400px',
+  },
+  [mqMax[1]]: {
+    fontSize: '18px',
+    width: '150px',
+  },
+  [mqMax[0]]: {
+    fontSize: '16px',
+    width: '100px',
+  },
+});
+
+const divNameStyle = css({
+  width: '500px',
+  wordBreak: 'break-all',
+  [mqMax[2]]: {
+    fontSize: '26px',
+    width: '400px',
+  },
+  [mqMax[1]]: {
+    fontSize: '18px',
+    width: '150px',
+  },
+  [mqMax[0]]: {
+    fontSize: '16px',
+    width: '100px',
+  },
 });
 
 const nameDisplayStyle = (showInput: boolean) =>
   css({
-    display: showInput ? 'none' : 'block',
+    display: showInput ? 'none' : 'flex',
   });
 
 const inputDisplayStyle = (showInput: boolean) =>
@@ -46,16 +78,31 @@ const inputDisplayStyle = (showInput: boolean) =>
   });
 
 const editButtonStyle = css({
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
   fontWeight: 'bold',
-  color: '#777777',
   marginLeft: '20px',
+  marginRight: '5px',
+  color: '#777777',
   ':hover': {
     cursor: 'pointer',
+  },
+  [mqMax[1]]: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    fontSize: '12px',
+    marginLeft: '5px',
   },
 });
 
 const penSvgStyle = css({
   marginRight: '5px',
+  [mqMax[1]]: {
+    width: '15px',
+    marginRight: '0',
+    marginBottom: '5px',
+  },
 });
 
 const doneStyle = css({
@@ -80,6 +127,11 @@ const newListButtonStyle = css({
     boxShadow: 'none',
     background: 'linear-gradient(90deg, #FFD976 0%, #F8BE26 100%)',
     cursor: 'pointer',
+  },
+  [mqMax[1]]: {
+    fontSize: '12px',
+    width: '70px',
+    height: '40px',
   },
 });
 
@@ -109,7 +161,11 @@ const Header = (props: Props) => {
           onKeyPress={detectEnter}
         />
         <div
-          className={cx([nameDisplayStyle(showInput), toDoListNameStyle])}
+          className={cx([
+            nameDisplayStyle(showInput),
+            toDoListNameStyle,
+            divNameStyle,
+          ])}
           onClick={() => makeEditable(setShowInput)}
         >
           {props.name}

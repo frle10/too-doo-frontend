@@ -1,6 +1,7 @@
 import React, { KeyboardEvent } from 'react';
 import { css } from 'emotion';
 import Plus from '../images/plus.svg';
+import { mqMax } from '../util/constants';
 
 interface Props {
   addTodo: (todo: any) => void;
@@ -24,9 +25,12 @@ const inputStyle = css({
   background: 'rgba(0, 0, 0, 0.05)',
   fontFamily: 'Inter',
   fontSize: '21px',
-  color: 'rgba(0, 0, 0, 0.25)',
   padding: '0 50px',
   margin: '15px 0',
+  [mqMax[1]]: {
+    height: '48px',
+    fontSize: '16px',
+  },
 });
 
 const plusStyle = css({

@@ -1,5 +1,6 @@
 import React from 'react';
 import { css } from 'emotion';
+import { mqMax } from '../util/constants';
 
 const footerStyle = css({
   display: 'flex',
@@ -21,10 +22,16 @@ const footerHeaderStyle = css({
   fontWeight: 900,
   fontSize: '32px',
   margin: '5px 0',
+  [mqMax[1]]: {
+    fontSize: '24px',
+  },
 });
 
 const footerContentStyle = css({
   marginBottom: '20px',
+  [mqMax[1]]: {
+    fontSize: '14px',
+  },
 });
 
 const Footer = () => {
