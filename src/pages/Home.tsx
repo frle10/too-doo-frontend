@@ -88,7 +88,7 @@ const Home = () => {
 
     const generator = document.getElementById('generator') as HTMLInputElement;
     generator.value = '';
-    history.push(`/${toDoList.uuid}`);
+    history.push(`/${uuidArg}`);
   };
 
   const changeCompleted = async (id: number) => {
