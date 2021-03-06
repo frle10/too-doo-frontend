@@ -1,11 +1,7 @@
 import { TodoList } from './types';
 
 export const UNTITLED = 'untitled';
-
-const LOCALHOST = 'http://localhost:3000';
-const PRODUCTION = 'https://api.frle.net';
-
-export const BACKEND_DOMAIN = LOCALHOST;
+export const BACKEND_DOMAIN = process.env.REACT_APP_API_URL;
 
 export const breakpoints = [350, 600, 1024, 2000];
 export const mqMin = breakpoints.map((bp) => `@media (min-width: ${bp}px)`);

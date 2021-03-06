@@ -1,5 +1,4 @@
-import { css } from 'emotion';
-import React from 'react';
+import { css } from '@emotion/css';
 import ToDo from './ToDo';
 
 interface Props {

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { css, cx } from 'emotion';
+import { useState } from 'react';
+import { css, cx } from '@emotion/css';
 import { makeEditable, validateNameChange } from '../util/headerUtil';
 import Pen from '../images/pen.svg';
 import Done from '../images/done-icon.svg';

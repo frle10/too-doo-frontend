@@ -1,5 +1,4 @@
-import React from 'react';
-import { css } from 'emotion';
+import { css } from '@emotion/css';
 import Checkmark from '../images/checkmark.svg';
 import { mqMax } from '../util/constants';
 

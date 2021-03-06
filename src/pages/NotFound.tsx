@@ -1,5 +1,4 @@
-import { css, cx } from 'emotion';
-import React from 'react';
+import { css, cx } from '@emotion/css';
 import { Link } from 'react-router-dom';
 import { newListButtonStyle } from '../components/Header';
 
