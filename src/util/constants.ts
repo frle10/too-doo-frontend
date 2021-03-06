@@ -1,7 +1,11 @@
 import { TodoList } from './types';
 
 export const UNTITLED = 'untitled';
-export const BACKEND_DOMAIN = 'https://api.frle.net';
+
+const LOCALHOST = 'http://localhost:3000';
+const PRODUCTION = 'https://api.frle.net';
+
+export const BACKEND_DOMAIN = LOCALHOST;
 
 export const breakpoints = [350, 600, 1024, 2000];
 export const mqMin = breakpoints.map((bp) => `@media (min-width: ${bp}px)`);
