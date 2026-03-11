@@ -1,6 +1,6 @@
 {
-  "name": "too-doo-arsfutura",
-  "version": "0.1.0",
+  "name": "modern-too-doo",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@emotion/css": "^11.1.3",
