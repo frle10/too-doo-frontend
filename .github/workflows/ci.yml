@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
 
 jobs:
@@ -12,17 +12,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Reads the pnpm version from the "packageManager" field in package.json.
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-          cache: yarn
+          cache: pnpm
 
-      - run: yarn install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile
 
-      - run: yarn lint
+      - run: pnpm lint
 
-      - run: yarn typecheck
+      - run: pnpm typecheck
 
-      - run: yarn test
+      - run: pnpm test
 
-      - run: yarn build
+      - run: pnpm build

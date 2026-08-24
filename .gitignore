@@ -2,8 +2,8 @@
 
 # dependencies
 /node_modules
-/.pnp
-.pnp.js
+# pnpm's local content-addressable store, if one is configured in-project.
+/.pnpm-store
 
 # testing
 /coverage
@@ -24,5 +24,4 @@
 .env.production.local
 
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+pnpm-debug.log*
