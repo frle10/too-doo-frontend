@@ -17,15 +17,14 @@ const errorMessageStyle = css({
   margin: '20px 0',
 });
 
-const homeButtonStyle = newListButtonStyle;
-
-const buttonDisplayStyle = css({
+// Applied to the <a> itself rather than to a wrapper, so the whole button is a
+// click target instead of only the text inside it.
+const homeLinkStyle = css({
   width: '100px',
-  '& a': {
-    textDecoration: 'none',
-    ':visited': {
-      color: 'black',
-    },
+  textDecoration: 'none',
+  color: 'black',
+  ':visited': {
+    color: 'black',
   },
 });
 
@@ -35,9 +34,9 @@ const NotFound = () => {
       <div className={errorMessageStyle}>
         The list with the specified UUID does not exist. :/
       </div>
-      <div className={cx([homeButtonStyle, buttonDisplayStyle])}>
-        <Link to='/'>Home</Link>
-      </div>
+      <Link to='/' className={cx([newListButtonStyle, homeLinkStyle])}>
+        Home
+      </Link>
     </div>
   );
 };

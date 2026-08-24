@@ -60,7 +60,6 @@ const ToDo = ({ id, completed, toDoContent, changeCompleted }: Props) => {
     <li className={toDoStyle}>
       <button
         type='button'
-        id={`todo${id}`}
         role='checkbox'
         aria-checked={completed}
         aria-label={toDoContent}

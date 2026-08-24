@@ -74,7 +74,6 @@ const ToDoGenerator = ({ addTodo }: Props) => {
       </button>
       <input
         type='text'
-        id='generator'
         aria-label='Add a to-do'
         className={inputStyle}
         placeholder='Add a to-do...'

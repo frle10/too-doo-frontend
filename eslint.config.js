@@ -11,13 +11,20 @@ export default tseslint.config(
     files: ['**/*.{ts,tsx}'],
     extends: [
       js.configs.recommended,
-      ...tseslint.configs.recommended,
+      // Type-checked rules: these are what catch a floating promise or an
+      // unchecked `any` leaking out of a mock, which the syntactic ruleset
+      // cannot see.
+      ...tseslint.configs.recommendedTypeChecked,
       reactHooks.configs.flat.recommended,
       prettier,
     ],
     languageOptions: {
       ecmaVersion: 2022,
       globals: globals.browser,
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
     plugins: {
       'react-refresh': reactRefresh,

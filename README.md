@@ -44,16 +44,17 @@ The frontend needs the API to do anything useful. See **Running with the backend
 
 ### Scripts
 
-| Command           | What it does                        |
-| ----------------- | ----------------------------------- |
-| `pnpm dev`        | Dev server with HMR on port 5173    |
-| `pnpm build`      | Typechecks, then builds to `dist/`  |
-| `pnpm preview`    | Serves the production build locally |
-| `pnpm test`       | Runs the test suite once            |
-| `pnpm test:watch` | Runs the tests in watch mode        |
-| `pnpm typecheck`  | `tsc --noEmit`                      |
-| `pnpm lint`       | ESLint (flat config)                |
-| `pnpm format`     | Prettier                            |
+| Command              | What it does                          |
+| -------------------- | ------------------------------------- |
+| `pnpm dev`           | Dev server with HMR on port 5173      |
+| `pnpm build`         | Typechecks, then builds to `dist/`    |
+| `pnpm preview`       | Serves the production build locally   |
+| `pnpm test`          | Runs the test suite once              |
+| `pnpm test:watch`    | Runs the tests in watch mode          |
+| `pnpm test:coverage` | Runs the tests with a coverage report |
+| `pnpm typecheck`     | `tsc --noEmit`                        |
+| `pnpm lint`          | ESLint (flat config, type-aware)      |
+| `pnpm format`        | Prettier                              |
 
 ## Configuration
 
@@ -140,13 +141,14 @@ src/
   components/     Header, ToDoGenerator, ToDoList, ToDo, Footer, Spinner (+ tests)
   pages/          Home, NotFound
   util/
-    apiUtil.ts    fetch wrapper, typed per endpoint
+    apiUtil.ts    fetch wrapper, typed per endpoint (+ tests)
     constants.ts  breakpoints, API base URL, empty-list shape
     styles.ts     shared styles (button reset, the yellow button)
-    types.ts      TodoList, Todo
+    types.ts      TodoList and Todo (the wire types), ListView (what the UI renders)
     uuid.ts       uuid generation + validation
   App.tsx         Page shell
   main.tsx        Entry point
+  vite-env.d.ts   Types for the VITE_ environment variables
 ```
 
 Responsive breakpoints are defined once in `util/constants.ts` and consumed as
