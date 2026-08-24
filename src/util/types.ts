@@ -10,3 +10,10 @@ export interface Todo {
   completed: boolean;
   content: string;
 }
+
+/**
+ * What the UI actually renders. A list that has not been persisted yet has no
+ * server-assigned `id` or `uuid`, so the view type deliberately omits them
+ * rather than inventing placeholders.
+ */
+export type ListView = Pick<TodoList, 'name' | 'todos'>;

@@ -35,13 +35,13 @@ const footerContentStyle = css({
 
 const Footer = () => {
   return (
-    <div className={footerStyle}>
-      <div className={separatorStyle}></div>
+    <footer className={footerStyle}>
+      <div className={separatorStyle} />
       <div className={footerHeaderStyle}>Too Doo</div>
       <div className={footerContentStyle}>
         Your to-dos have never been simpler.
       </div>
-    </div>
+    </footer>
   );
 };
 

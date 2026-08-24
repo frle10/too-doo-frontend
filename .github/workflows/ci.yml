@@ -5,6 +5,15 @@ on:
     branches: [main]
   pull_request:
 
+# A push that supersedes an in-flight run cancels it, so a branch that is being
+# pushed to repeatedly does not queue up runs of stale commits.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest

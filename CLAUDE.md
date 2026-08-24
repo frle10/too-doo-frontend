@@ -24,6 +24,7 @@ or `yarn` in this repo. Node >= 22.12 (`.nvmrc` pins the version CI uses).
 | Lint                   | `pnpm lint`                               |
 | Tests (once)           | `pnpm test`                               |
 | Tests (watch)          | `pnpm test:watch`                         |
+| Tests + coverage       | `pnpm test:coverage`                      |
 | Single test file       | `pnpm vitest run src/pages/Home.test.tsx` |
 | Production build       | `pnpm build` (runs `tsc --noEmit` first)  |
 | Format                 | `pnpm format`                             |
@@ -49,8 +50,9 @@ src/
   util/apiUtil.ts       the only place that calls fetch()
   util/constants.ts     BACKEND_DOMAIN, breakpoints, emptyList
   util/styles.ts        shared emotion styles (buttonReset, newListButtonStyle)
-  util/types.ts         TodoList, Todo
+  util/types.ts         TodoList, Todo, ListView
   util/uuid.ts          isUuid / newUuid, replacing the `uuid` package
+  vite-env.d.ts         types the VITE_ env vars this app reads
 ```
 
 `Home.tsx` owns all state; everything under `components/` is a presentational
@@ -84,6 +86,17 @@ fresh list share one uuid instead of creating two lists. State in `Home.tsx` is
 derived from the URL (`loaded.uuid === currentUuid`), so navigation needs no
 reset effect — preserve that property when editing.
 
+**The UI renders `ListView`, not `TodoList`.** A list that has not been saved
+yet has no server-assigned `id` or `uuid`, so `Home` holds
+`Pick<TodoList, 'name' | 'todos'>` and `emptyList` carries no placeholder ids.
+`TodoList` stays the wire type returned by `apiUtil`.
+
+**Lint is type-aware** (`tseslint.configs.recommendedTypeChecked`). Two
+consequences: `navigate(...)` returns a promise in react-router 7 and must be
+prefixed with `void`, and an async handler passed to a `() => void` prop is
+wrapped at the JSX boundary (`(id) => void changeCompleted(id)`) because the
+component fires and forgets — `Home` renders every failure itself.
+
 **Single quotes, including in JSX** (`.prettierrc`: `singleQuote`,
 `jsxSingleQuote`, `trailingComma: es5`). Run `pnpm format` rather than matching
 by hand.
@@ -98,7 +111,9 @@ Tests sit next to the code (`Header.test.tsx` beside `Header.tsx`).
 Query by role and accessible name (`getByRole('checkbox', { name: '...' })`),
 never by class or test id. Drive interaction with `userEvent.setup()`, not
 `fireEvent`. Mock at the `util/apiUtil` module boundary with `vi.mock`; do not
-stub global `fetch`.
+stub global `fetch`. The single exception is `apiUtil.test.ts`, which is the
+test _of_ that boundary and stubs `fetch` with `vi.stubGlobal` — nothing else
+should.
 
 ## Environment and deploy
 

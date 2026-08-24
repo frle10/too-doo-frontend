@@ -15,7 +15,7 @@ import {
 } from '../util/apiUtil';
 import { emptyList, UNTITLED } from '../util/constants';
 import { isUuid, newUuid } from '../util/uuid';
-import type { TodoList } from '../util/types';
+import type { ListView } from '../util/types';
 
 const errorStyle = css({
   color: '#B00020',
@@ -28,7 +28,7 @@ const describe = (error: unknown) =>
 /** The list we hold, tagged with the uuid it belongs to. */
 interface Loaded {
   uuid?: string;
-  list: TodoList;
+  list: ListView;
 }
 
 const Home = () => {
@@ -62,7 +62,9 @@ const Home = () => {
   useEffect(() => {
     if (!currentUuid) {
       if (uuid) {
-        navigate('/', { replace: true });
+        // `navigate` returns a promise in react-router 7; nothing here depends
+        // on the transition having settled, so it is discarded deliberately.
+        void navigate('/', { replace: true });
       }
       return;
     }
@@ -80,7 +82,7 @@ const Home = () => {
         }
 
         if (!list) {
-          navigate('/NotFound', { replace: true });
+          void navigate('/NotFound', { replace: true });
           return;
         }
 
@@ -109,7 +111,7 @@ const Home = () => {
       setError(null);
       setLoaded({ uuid: target, list: await callChangeName(target, name) });
       if (currentUuid !== target) {
-        navigate(`/${target}`);
+        void navigate(`/${target}`);
       }
     } catch (err) {
       setError(describe(err));
@@ -130,7 +132,7 @@ const Home = () => {
         };
       });
       if (currentUuid !== target) {
-        navigate(`/${target}`);
+        void navigate(`/${target}`);
       }
       return true;
     } catch (err) {
@@ -161,7 +163,7 @@ const Home = () => {
     createdUuidRef.current = undefined;
     setLoaded({ list: emptyList });
     setError(null);
-    navigate('/');
+    void navigate('/');
   };
 
   if (loading) {
@@ -170,14 +172,28 @@ const Home = () => {
 
   return (
     <>
-      <Header name={toDoList.name} changeName={changeName} newList={newList} />
-      <ToDoGenerator addTodo={addTodo} />
-      {error && (
-        <div className={errorStyle} role='alert'>
-          {error}
-        </div>
-      )}
-      <ToDoList todos={toDoList.todos} changeCompleted={changeCompleted} />
+      {/*
+        The handlers below are async but the components treat them as
+        fire-and-forget: every failure is caught here and rendered as `error`,
+        so there is nothing left for a caller to await.
+      */}
+      <Header
+        name={toDoList.name}
+        changeName={(name) => void changeName(name)}
+        newList={newList}
+      />
+      <main>
+        <ToDoGenerator addTodo={addTodo} />
+        {error && (
+          <div className={errorStyle} role='alert'>
+            {error}
+          </div>
+        )}
+        <ToDoList
+          todos={toDoList.todos}
+          changeCompleted={(id) => void changeCompleted(id)}
+        />
+      </main>
       <Footer />
     </>
   );

@@ -16,5 +16,18 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './src/setupTests.ts',
     css: true,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'lcov'],
+      include: ['src/**/*.{ts,tsx}'],
+      // Entry points and pure style/type modules carry no branches worth
+      // measuring; counting them only dilutes the number.
+      exclude: [
+        'src/main.tsx',
+        'src/setupTests.ts',
+        'src/util/types.ts',
+        'src/util/styles.ts',
+      ],
+    },
   },
 });

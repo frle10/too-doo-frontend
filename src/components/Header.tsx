@@ -138,12 +138,11 @@ const Header = ({ name, changeName, newList }: Props) => {
   };
 
   return (
-    <div className={headerStyle}>
+    <header className={headerStyle}>
       <div className={headerStyle}>
         <input
           ref={inputRef}
           type='text'
-          id='toDoListName'
           aria-label='List name'
           maxLength={25}
           className={cx([
@@ -198,7 +197,7 @@ const Header = ({ name, changeName, newList }: Props) => {
       >
         New List
       </button>
-    </div>
+    </header>
   );
 };
 
