@@ -1,8 +1,9 @@
 import { css } from '@emotion/css';
 import ToDo from './ToDo';
+import type { Todo } from '../util/types';
 
 interface Props {
-  todos: Array<any>;
+  todos: Todo[];
   changeCompleted: (id: number) => void;
 }
 
@@ -11,16 +12,16 @@ const listStyle = css({
   listStyleType: 'none',
 });
 
-const ToDoList = (props: Props) => {
+const ToDoList = ({ todos, changeCompleted }: Props) => {
   return (
     <ul className={listStyle}>
-      {props.todos.map((todo, index) => (
+      {todos.map((todo) => (
         <ToDo
+          key={todo.id}
           id={todo.id}
           completed={todo.completed}
           toDoContent={todo.content}
-          changeCompleted={props.changeCompleted}
-          key={index}
+          changeCompleted={changeCompleted}
         />
       ))}
     </ul>

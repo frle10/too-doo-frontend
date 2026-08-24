@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { css, cx } from '@emotion/css';
-import { makeEditable, validateNameChange } from '../util/headerUtil';
 import Pen from '../images/pen.svg';
 import Done from '../images/done-icon.svg';
-import { mqMax } from '../util/constants';
+import { mqMax, UNTITLED } from '../util/constants';
+import { buttonReset, newListButtonStyle } from '../util/styles';
 
 interface Props {
   name: string;
@@ -109,74 +109,95 @@ const doneStyle = css({
   },
 });
 
-export const newListButtonStyle = css({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  background: 'linear-gradient(180deg, #FFD976 0%, #F8BE26 100%)',
-  border: '1px solid rgba(0, 0, 0, 0.1)',
-  boxSizing: 'border-box',
-  boxShadow: '0px 1px 2px rgba(0, 0, 0, 0.2)',
-  borderRadius: '4px',
-  fontSize: '16px',
-  fontWeight: 'bold',
-  minWidth: '100px',
-  minHeight: '43px',
-  ':hover': {
-    boxShadow: 'none',
-    background: 'linear-gradient(90deg, #FFD976 0%, #F8BE26 100%)',
-    cursor: 'pointer',
-  },
-  [mqMax[1]]: {
-    fontSize: '12px',
-    minWidth: '70px',
-  },
-});
-
-const Header = (props: Props) => {
+const Header = ({ name, changeName, newList }: Props) => {
   const [showInput, setShowInput] = useState(false);
+  const [draft, setDraft] = useState(name);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const startEditing = () => {
+    setDraft(name);
+    setShowInput(true);
+  };
+
+  useEffect(() => {
+    if (showInput) {
+      inputRef.current?.focus();
+    }
+  }, [showInput]);
+
+  const commit = () => {
+    if (!showInput) {
+      return;
+    }
+
+    // An empty name falls back to "untitled", matching the original behaviour.
+    const next = draft ? draft : UNTITLED;
+    setDraft(next);
+    setShowInput(false);
+    changeName(next);
+  };
 
   return (
     <div className={headerStyle}>
       <div className={headerStyle}>
         <input
+          ref={inputRef}
           type='text'
           id='toDoListName'
+          aria-label='List name'
           maxLength={25}
           className={cx([
             toDoListNameStyle,
             inputStyle,
             inputDisplayStyle(showInput),
           ])}
-          defaultValue={props.name}
-          onBlur={() => validateNameChange(setShowInput, props.changeName)}
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onBlur={commit}
         />
-        <div
+        <button
+          type='button'
+          aria-label={`Rename list "${name}"`}
           className={cx([
+            buttonReset,
             nameDisplayStyle(showInput),
             toDoListNameStyle,
             divNameStyle,
           ])}
-          onClick={() => makeEditable(setShowInput)}
+          onClick={startEditing}
         >
-          {props.name}
-        </div>
-        <div
-          className={cx([nameDisplayStyle(showInput), editButtonStyle])}
-          onClick={() => makeEditable(setShowInput)}
+          {name}
+        </button>
+        <button
+          type='button'
+          className={cx([
+            buttonReset,
+            nameDisplayStyle(showInput),
+            editButtonStyle,
+          ])}
+          onClick={startEditing}
         >
-          <img src={Pen} alt='Pen' className={penSvgStyle} /> Edit
-        </div>
-        <div
-          className={cx([inputDisplayStyle(showInput), doneStyle])}
-          onClick={() => validateNameChange(setShowInput, props.changeName)}
+          <img src={Pen} alt='' aria-hidden='true' className={penSvgStyle} />{' '}
+          Edit
+        </button>
+        <button
+          type='button'
+          aria-label='Save list name'
+          className={cx([buttonReset, inputDisplayStyle(showInput), doneStyle])}
+          // Keep focus on the input so it does not blur-commit before onClick.
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={commit}
         >
-          <img src={Done} alt='Done' />
-        </div>
+          <img src={Done} alt='' aria-hidden='true' />
+        </button>
       </div>
-      <div className={newListButtonStyle} onClick={() => props.newList()}>
+      <button
+        type='button'
+        className={cx([buttonReset, newListButtonStyle])}
+        onClick={newList}
+      >
         New List
-      </div>
+      </button>
     </div>
   );
 };

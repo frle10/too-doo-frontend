@@ -1,117 +1,182 @@
-import React, { useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
-import { v4 as uuidv4, validate } from 'uuid';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { css } from '@emotion/css';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
+import Spinner from '../components/Spinner';
 import ToDoGenerator from '../components/ToDoGenerator';
 import ToDoList from '../components/ToDoList';
 import {
-  callChangeName,
+  ApiError,
   callAddTodo,
   callChangeCompleted,
+  callChangeName,
   callGetTodoList,
 } from '../util/apiUtil';
 import { emptyList, UNTITLED } from '../util/constants';
+import { isUuid, newUuid } from '../util/uuid';
+import type { TodoList } from '../util/types';
 
-interface ParamTypes {
-  uuid: string | undefined;
+const errorStyle = css({
+  color: '#B00020',
+  margin: '10px 0',
+});
+
+const describe = (error: unknown) =>
+  error instanceof ApiError ? error.message : 'Something went wrong.';
+
+/** The list we hold, tagged with the uuid it belongs to. */
+interface Loaded {
+  uuid?: string;
+  list: TodoList;
 }
 
 const Home = () => {
-  const [toDoList, setToDoList] = useState(emptyList);
+  const navigate = useNavigate();
+  const { uuid } = useParams();
 
-  const history = useHistory();
-  const { uuid } = useParams<ParamTypes>();
-  const [urlUuid, setUrlUuid] = useState(uuid);
+  const currentUuid = isUuid(uuid) ? uuid : undefined;
+
+  const [loaded, setLoaded] = useState<Loaded>({ list: emptyList });
+  const [error, setError] = useState<string | null>(null);
+
+  // A uuid minted for a list that does not exist server-side yet. Kept in a ref
+  // so two actions firing back to back on a fresh list share one uuid instead
+  // of each minting their own and creating two lists.
+  const createdUuidRef = useRef<string | undefined>(undefined);
+
+  // Everything below is derived, so navigating between lists needs no reset:
+  // a list is only shown while the url still points at it.
+  const toDoList = loaded.uuid === currentUuid ? loaded.list : emptyList;
+  const loading = !!currentUuid && loaded.uuid !== currentUuid && !error;
+
+  const ensureUuid = useCallback(() => {
+    if (currentUuid) {
+      return currentUuid;
+    }
+
+    createdUuidRef.current ??= newUuid();
+    return createdUuidRef.current;
+  }, [currentUuid]);
 
   useEffect(() => {
-    const getTodoList = async () => {
-      const valid = validate(urlUuid ? urlUuid : '');
-      if (!urlUuid || !valid) {
-        setToDoList(emptyList);
-        if (!valid) {
-          history.push('/');
-          setUrlUuid(undefined);
-        }
-      } else {
-        callGetTodoList(urlUuid).then((tl) => {
-          if (tl.data) {
-            setToDoList(tl.data);
-            const input = document.getElementById(
-              'toDoListName'
-            ) as HTMLInputElement;
-            input.value = tl.data.name;
-          } else {
-            history.push('/NotFound');
-          }
-        });
+    if (!currentUuid) {
+      if (uuid) {
+        navigate('/', { replace: true });
       }
-    };
-
-    getTodoList();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const changeName = async (name: string) => {
-    if (name === UNTITLED && !urlUuid) {
       return;
     }
 
-    const uuidArg = urlUuid ? urlUuid : uuidv4();
-    if (!urlUuid) {
-      setUrlUuid(uuidArg);
+    if (loaded.uuid === currentUuid) {
+      return;
     }
 
-    await callChangeName(uuidArg, name).then((tl) => {
-      setToDoList(tl.data);
-      const input = document.getElementById('toDoListName') as HTMLInputElement;
-      input.value = tl.data.name;
+    let cancelled = false;
 
-      if (!urlUuid) {
-        history.push(`/${uuidArg}`);
+    callGetTodoList(currentUuid)
+      .then((list) => {
+        if (cancelled) {
+          return;
+        }
+
+        if (!list) {
+          navigate('/NotFound', { replace: true });
+          return;
+        }
+
+        setLoaded({ uuid: currentUuid, list });
+      })
+      .catch((err: unknown) => {
+        if (!cancelled) {
+          setError(describe(err));
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [currentUuid, uuid, loaded.uuid, navigate]);
+
+  const changeName = async (name: string) => {
+    // A fresh list is only persisted once it is actually named.
+    if (name === UNTITLED && !currentUuid && !createdUuidRef.current) {
+      return;
+    }
+
+    const target = ensureUuid();
+
+    try {
+      setError(null);
+      setLoaded({ uuid: target, list: await callChangeName(target, name) });
+      if (currentUuid !== target) {
+        navigate(`/${target}`);
       }
-    });
+    } catch (err) {
+      setError(describe(err));
+    }
   };
 
-  const addTodo = async (todo: any) => {
-    const uuidArg = urlUuid ? urlUuid : uuidv4();
-    if (!urlUuid) {
-      setUrlUuid(uuidArg);
+  const addTodo = async (content: string): Promise<boolean> => {
+    const target = ensureUuid();
+
+    try {
+      setError(null);
+      const created = await callAddTodo(target, content);
+      setLoaded((prev) => {
+        const base = prev.uuid === target ? prev.list : emptyList;
+        return {
+          uuid: target,
+          list: { ...base, todos: [created, ...base.todos] },
+        };
+      });
+      if (currentUuid !== target) {
+        navigate(`/${target}`);
+      }
+      return true;
+    } catch (err) {
+      setError(describe(err));
+      return false;
     }
-
-    const todoToAdd = await callAddTodo(uuidArg, todo.content);
-    setToDoList(
-      Object.assign({}, toDoList, {
-        todos: [todoToAdd.data, ...toDoList.todos],
-      })
-    );
-
-    const generator = document.getElementById('generator') as HTMLInputElement;
-    generator.value = '';
-    history.push(`/${uuidArg}`);
   };
 
   const changeCompleted = async (id: number) => {
-    await callChangeCompleted(id).then((td) => td.data);
-    const changedTodos = toDoList.todos;
-    changedTodos.forEach((td) =>
-      td.id === id ? (td.completed = !td.completed) : {}
-    );
-    setToDoList(Object.assign({}, toDoList, { todos: changedTodos }));
+    try {
+      setError(null);
+      const updated = await callChangeCompleted(id);
+      setLoaded((prev) => ({
+        ...prev,
+        list: {
+          ...prev.list,
+          todos: prev.list.todos.map((todo) =>
+            todo.id === id ? { ...todo, completed: updated.completed } : todo
+          ),
+        },
+      }));
+    } catch (err) {
+      setError(describe(err));
+    }
   };
 
   const newList = () => {
-    const input = document.getElementById('toDoListName') as HTMLInputElement;
-    input.value = UNTITLED;
-    setToDoList(emptyList);
-    setUrlUuid(undefined);
-    history.push('/');
+    createdUuidRef.current = undefined;
+    setLoaded({ list: emptyList });
+    setError(null);
+    navigate('/');
   };
+
+  if (loading) {
+    return <Spinner />;
+  }
 
   return (
     <>
       <Header name={toDoList.name} changeName={changeName} newList={newList} />
       <ToDoGenerator addTodo={addTodo} />
+      {error && (
+        <div className={errorStyle} role='alert'>
+          {error}
+        </div>
+      )}
       <ToDoList todos={toDoList.todos} changeCompleted={changeCompleted} />
       <Footer />
     </>

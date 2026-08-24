@@ -1,0 +1,42 @@
+# Netlify build configuration.
+#
+# Note: this file takes precedence over the build settings configured in the
+# Netlify UI, so the build command and publish directory below are the source
+# of truth. Settings that Netlify does NOT read from here — the build image,
+# the production branch, and environment variables — still have to be changed
+# in the UI.
+
+[build]
+  command = "yarn build"
+  # Vite outputs to dist/. Create React App used to output to build/.
+  publish = "dist"
+
+[build.environment]
+  # Vite 8 requires Node 20.19+/22.12+. Keep in sync with .nvmrc.
+  NODE_VERSION = "24"
+  # VITE_API_URL is a public API base URL that is deliberately inlined into the
+  # bundle at build time. Without this, Netlify's secrets scanner fails the
+  # build when the variable is also set in the UI.
+  SECRETS_SCAN_OMIT_KEYS = "VITE_API_URL"
+
+# The SPA fallback lives in public/_redirects rather than here, so it keeps
+# working on any static host. Vite copies it into dist/ on build.
+
+# Asset filenames are content-hashed by Vite, so they can be cached forever.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# The entry point must never be cached, or deploys will not reach visitors.
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"

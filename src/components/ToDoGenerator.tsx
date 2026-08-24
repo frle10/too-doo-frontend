@@ -1,10 +1,13 @@
-import { KeyboardEvent } from 'react';
-import { css } from '@emotion/css';
+import { useState } from 'react';
+import type { KeyboardEvent } from 'react';
+import { css, cx } from '@emotion/css';
 import Plus from '../images/plus.svg';
 import { mqMax } from '../util/constants';
+import { buttonReset } from '../util/styles';
 
 interface Props {
-  addTodo: (todo: any) => void;
+  /** Resolves to `true` when the to-do was stored, which clears the input. */
+  addTodo: (content: string) => Promise<boolean>;
 }
 
 const generatorStyle = css({
@@ -37,34 +40,47 @@ const plusStyle = css({
   position: 'absolute',
   margin: '0 20px',
   cursor: 'pointer',
+  display: 'flex',
 });
 
-const ToDoGenerator = (props: Props) => {
-  const addTodo = () => {
-    const generator = document.getElementById('generator') as HTMLInputElement;
-    if (generator.value) {
-      props.addTodo({
-        completed: false,
-        content: generator.value,
-      });
+const ToDoGenerator = ({ addTodo }: Props) => {
+  const [content, setContent] = useState('');
+
+  const submit = async () => {
+    if (!content) {
+      return;
+    }
+
+    if (await addTodo(content)) {
+      setContent('');
     }
   };
 
   const detectEnter = (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
-      addTodo();
+      void submit();
     }
   };
 
   return (
     <div className={generatorStyle}>
-      <img src={Plus} alt='Plus' className={plusStyle} onClick={addTodo} />
+      <button
+        type='button'
+        aria-label='Add to-do'
+        className={cx([buttonReset, plusStyle])}
+        onClick={() => void submit()}
+      >
+        <img src={Plus} alt='' aria-hidden='true' />
+      </button>
       <input
         type='text'
         id='generator'
+        aria-label='Add a to-do'
         className={inputStyle}
         placeholder='Add a to-do...'
-        onKeyPress={detectEnter}
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        onKeyDown={detectEnter}
       />
     </div>
   );
