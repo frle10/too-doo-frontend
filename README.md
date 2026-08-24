@@ -1,44 +1,154 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Too Doo — Frontend
 
-## Available Scripts
+A simple, shareable to-do list. Every list lives at its own URL, so sharing a list is
+just sharing a link. No accounts, no sign-up.
 
-In the project directory, you can run:
+**Live:** [toodoo.frle.dev](https://toodoo.frle.dev)
 
-### `npm start`
+## About this project
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Too Doo started in 2020 as an interview take-home while I was still a student. The visual
+design was supplied as a Figma file and the task was to build it; the CSS here is a
+faithful implementation of that design.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+It was modernized in 2026 — Create React App to Vite, React 17 to 19, react-router 5 to 7,
+plus a test suite and an accessibility pass. **The design and the feature set were
+deliberately left untouched.** Visual parity was verified by screenshot diffing every
+screen and breakpoint before and after the refactor.
 
-### `npm test`
+## Stack
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+|         |                                                                    |
+| ------- | ------------------------------------------------------------------ |
+| Build   | Vite 8                                                             |
+| UI      | React 19, TypeScript 5.9                                           |
+| Routing | react-router 7                                                     |
+| Styling | Emotion (`@emotion/css`), object styles co-located with components |
+| Tests   | Vitest 4 + React Testing Library                                   |
+| HTTP    | native `fetch`                                                     |
 
-### `npm run build`
+There is no state-management library and no HTTP client dependency — at this size the
+platform covers it.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Getting started
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+Requires **Node 22.12+** (see `.nvmrc`) and Yarn.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+yarn install
+yarn dev          # http://localhost:5173
+```
 
-### `npm run eject`
+The frontend needs the API to do anything useful. See **Running with the backend** below.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### Scripts
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+| Command           | What it does                        |
+| ----------------- | ----------------------------------- |
+| `yarn dev`        | Dev server with HMR on port 5173    |
+| `yarn build`      | Typechecks, then builds to `dist/`  |
+| `yarn preview`    | Serves the production build locally |
+| `yarn test`       | Runs the test suite once            |
+| `yarn test:watch` | Runs the tests in watch mode        |
+| `yarn typecheck`  | `tsc --noEmit`                      |
+| `yarn lint`       | ESLint (flat config)                |
+| `yarn format`     | Prettier                            |
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Configuration
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+One environment variable, the base URL of the API:
 
-## Learn More
+| File               | Value                                |
+| ------------------ | ------------------------------------ |
+| `.env.development` | `VITE_API_URL=http://localhost:3000` |
+| `.env.production`  | `VITE_API_URL=https://api.frle.net`  |
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Vite inlines this at build time, so a production build is tied to the URL that was set
+when it was built.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Running with the backend
+
+The API lives in a separate repo, [`too-doo-backend`](https://github.com/frle10/too-doo-backend)
+(NestJS + PostgreSQL). Roughly:
+
+```bash
+cd ../too-doo-backend
+docker compose up -d     # PostgreSQL on port 47385
+yarn install
+yarn start:dev           # API on port 3000
+```
+
+Then `yarn dev` here. The dev server runs on 5173, so it does not collide with the API.
+
+Because the two run on different origins, **the backend must allow this origin via CORS**
+(`app.enableCors()` in its `src/main.ts`) or every request will be blocked by the browser.
+The same applies in production for `toodoo.frle.dev` calling `api.frle.net`.
+
+### Endpoints consumed
+
+| Method  | Path                | Purpose                                              |
+| ------- | ------------------- | ---------------------------------------------------- |
+| `GET`   | `/todos/:uuid`      | Fetch a list. An empty body means "no such list".    |
+| `PATCH` | `/todos/:uuid`      | Rename a list, creating it if it does not exist.     |
+| `POST`  | `/todos/todo/:uuid` | Add a to-do, creating the list if it does not exist. |
+| `PATCH` | `/todos/todo/:id`   | Toggle a to-do's completed flag.                     |
+
+A list is only persisted once you name it or add the first to-do — a uuid is minted
+client-side and the list is created lazily by the first write.
+
+## Deploying
+
+`yarn build` emits a fully static `dist/`, so any static host works.
+
+**The host must rewrite unknown paths to `index.html`.** Lists live at `/:uuid`, so
+without an SPA fallback a refresh or a shared link 404s. `public/_redirects` carries the
+rule (Vite copies it into `dist/`), which covers Netlify and Cloudflare Pages. On nginx:
+
+```nginx
+location / {
+  try_files $uri $uri/ /index.html;
+}
+```
+
+### Netlify
+
+This site is hosted on Netlify. `netlify.toml` holds the build command, publish
+directory, Node version and cache/security headers, and **overrides whatever is set in
+the Netlify UI** for build command and publish directory.
+
+Three things Netlify does _not_ read from `netlify.toml` and that must be set in the UI:
+
+- **Build image** — must be Ubuntu Noble 24.04 or newer for Node 24.
+- **Production branch** — the branch that publishes to the live site.
+- **Environment variables** — see below.
+
+`VITE_API_URL` is committed in `.env.production`, so it does **not** need to be set in the
+Netlify UI. If you do set it there, the UI value wins. Either way the build-time value is
+inlined into the bundle; `SECRETS_SCAN_OMIT_KEYS` in `netlify.toml` stops Netlify's secrets
+scanner from failing the build over it.
+
+The old `REACT_APP_API_URL` variable is dead — Vite only exposes variables prefixed
+`VITE_`.
+
+## Project structure
+
+```
+src/
+  components/     Header, ToDoGenerator, ToDoList, ToDo, Footer, Spinner (+ tests)
+  pages/          Home, NotFound
+  util/
+    apiUtil.ts    fetch wrapper, typed per endpoint
+    constants.ts  breakpoints, API base URL, empty-list shape
+    styles.ts     shared styles (button reset, the yellow button)
+    types.ts      TodoList, Todo
+    uuid.ts       uuid generation + validation
+  App.tsx         Page shell
+  main.tsx        Entry point
+```
+
+Responsive breakpoints are defined once in `util/constants.ts` and consumed as
+`mqMax[n]` / `mqMin[n]` inside Emotion object styles.
+
+## License
+
+MIT — see [LICENSE](LICENSE).

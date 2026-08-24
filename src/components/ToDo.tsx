@@ -1,6 +1,7 @@
-import { css } from '@emotion/css';
+import { css, cx } from '@emotion/css';
 import Checkmark from '../images/checkmark.svg';
 import { mqMax } from '../util/constants';
+import { buttonReset } from '../util/styles';
 
 interface Props {
   id: number;
@@ -54,21 +55,26 @@ const checkmarkStyle = (completed: boolean) =>
     },
   });
 
-const ToDo = (props: Props) => {
+const ToDo = ({ id, completed, toDoContent, changeCompleted }: Props) => {
   return (
     <li className={toDoStyle}>
-      <div
-        id={`todo${props.id}`}
-        className={customCheckboxStyle(props.completed)}
-        onClick={() => props.changeCompleted(props.id)}
+      <button
+        type='button'
+        id={`todo${id}`}
+        role='checkbox'
+        aria-checked={completed}
+        aria-label={toDoContent}
+        className={cx([buttonReset, customCheckboxStyle(completed)])}
+        onClick={() => changeCompleted(id)}
       >
         <img
           src={Checkmark}
-          alt='Checkmark'
-          className={checkmarkStyle(props.completed)}
+          alt=''
+          aria-hidden='true'
+          className={checkmarkStyle(completed)}
         />
-      </div>
-      <div className={labelStyle}>{props.toDoContent}</div>
+      </button>
+      <div className={labelStyle}>{toDoContent}</div>
     </li>
   );
 };

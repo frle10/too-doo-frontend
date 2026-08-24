@@ -1,6 +1,6 @@
 import { css, cx } from '@emotion/css';
 import { Link } from 'react-router-dom';
-import { newListButtonStyle } from '../components/Header';
+import { newListButtonStyle } from '../util/styles';
 
 const notFoundStyle = css({
   display: 'flex',

@@ -1,19 +1,16 @@
-import React from 'react';
-import { Route, Router, Switch } from 'react-router-dom';
-import { createBrowserHistory } from 'history';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 
-const history = createBrowserHistory();
-
 const ApplicationRouter = () => {
   return (
-    <Router history={history}>
-      <Switch>
-        <Route exact path='/NotFound' component={NotFound} />
-        <Route path='/:uuid?' component={Home} />
-      </Switch>
-    </Router>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/NotFound' element={<NotFound />} />
+        <Route path='/' element={<Home />} />
+        <Route path='/:uuid' element={<Home />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 

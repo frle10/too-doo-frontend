@@ -2,7 +2,7 @@ export interface TodoList {
   id: number;
   uuid: string;
   name: string;
-  todos: Array<Todo>;
+  todos: Todo[];
 }
 
 export interface Todo {
