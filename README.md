@@ -32,11 +32,12 @@ platform covers it.
 
 ## Getting started
 
-Requires **Node 22.12+** (see `.nvmrc`) and Yarn.
+Requires **Node 22.12+** (see `.nvmrc`) and pnpm. The exact pnpm version is pinned in
+`package.json` under `packageManager`, so `corepack enable pnpm` is enough to get it.
 
 ```bash
-yarn install
-yarn dev          # http://localhost:5173
+pnpm install
+pnpm dev          # http://localhost:5173
 ```
 
 The frontend needs the API to do anything useful. See **Running with the backend** below.
@@ -45,14 +46,14 @@ The frontend needs the API to do anything useful. See **Running with the backend
 
 | Command           | What it does                        |
 | ----------------- | ----------------------------------- |
-| `yarn dev`        | Dev server with HMR on port 5173    |
-| `yarn build`      | Typechecks, then builds to `dist/`  |
-| `yarn preview`    | Serves the production build locally |
-| `yarn test`       | Runs the test suite once            |
-| `yarn test:watch` | Runs the tests in watch mode        |
-| `yarn typecheck`  | `tsc --noEmit`                      |
-| `yarn lint`       | ESLint (flat config)                |
-| `yarn format`     | Prettier                            |
+| `pnpm dev`        | Dev server with HMR on port 5173    |
+| `pnpm build`      | Typechecks, then builds to `dist/`  |
+| `pnpm preview`    | Serves the production build locally |
+| `pnpm test`       | Runs the test suite once            |
+| `pnpm test:watch` | Runs the tests in watch mode        |
+| `pnpm typecheck`  | `tsc --noEmit`                      |
+| `pnpm lint`       | ESLint (flat config)                |
+| `pnpm format`     | Prettier                            |
 
 ## Configuration
 
@@ -78,7 +79,9 @@ yarn install
 yarn start:dev           # API on port 3000
 ```
 
-Then `yarn dev` here. The dev server runs on 5173, so it does not collide with the API.
+(The backend repo still uses Yarn; only this repo moved to pnpm.)
+
+Then `pnpm dev` here. The dev server runs on 5173, so it does not collide with the API.
 
 Because the two run on different origins, **the backend must allow this origin via CORS**
 (`app.enableCors()` in its `src/main.ts`) or every request will be blocked by the browser.
@@ -98,7 +101,7 @@ client-side and the list is created lazily by the first write.
 
 ## Deploying
 
-`yarn build` emits a fully static `dist/`, so any static host works.
+`pnpm build` emits a fully static `dist/`, so any static host works.
 
 **The host must rewrite unknown paths to `index.html`.** Lists live at `/:uuid`, so
 without an SPA fallback a refresh or a shared link 404s. `public/_redirects` carries the
